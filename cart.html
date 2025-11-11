@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebSpace Eats | Cart</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .cart-container {
+      padding-top: 120px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 15px;
+    }
+
+    .cart-item img {
+      width: 90px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 15px;
+    }
+
+    .item-info {
+      flex: 1;
+    }
+
+    .item-info h3 {
+      color: #ffcc00;
+      margin-bottom: 4px;
+    }
+
+    .item-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .item-actions button {
+      background: rgba(0,0,0,0.3);
+      border: none;
+      color: #fff;
+      font-size: 1rem;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .item-actions button:hover {
+      background: linear-gradient(90deg, #ff7b00, #ff00aa);
+    }
+
+    .cart-summary {
+      text-align: right;
+      margin-top: 25px;
+      font-size: 1.2rem;
+    }
+
+    .cart-summary span {
+      color: #ffcc00;
+      font-weight: bold;
+    }
+
+    .checkout-form {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 40px;
+    }
+
+    .checkout-form input, .checkout-form textarea {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
+
+    .checkout-form button {
+      margin-top: 10px;
+    }
+
+    .empty {
+      text-align: center;
+      color: #ffcc00;
+      font-size: 1.2rem;
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">WebSpace Eats</div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <button class="cart-btn">🛒 Cart (<span>0</span>)</button>
+  </nav>
+
+  <div class="cart-container container">
+    <h1 style="color:#ffcc00;margin-bottom:20px;">Your Cart 🛍️</h1>
+
+    <div id="cartItems"></div>
+
+    <div class="cart-summary" id="cartSummary"></div>
+
+    <div id="checkoutSection" style="display:none;">
+      <h2 style="color:#ffcc00;margin-top:40px;">Checkout Details</h2>
+      <form class="checkout-form" id="checkoutForm">
+        <input type="text" id="name" placeholder="Full Name" required />
+        <input type="tel" id="phone" placeholder="Phone Number" required />
+        <textarea id="address" placeholder="Delivery Address" required></textarea>
+        <button class="btn" type="submit">Place Order</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>© 2025 WebSpace Eats | Your Warm Food Partner</footer>
+  <script src="script.js"></script>
+  <script>
+    const cartContainer = document.getElementById("cartItems");
+    const cartSummary = document.getElementById("cartSummary");
+    const checkoutSection = document.getElementById("checkoutSection");
+    const checkoutForm = document.getElementById("checkoutForm");
+    const cartBtnCount = document.querySelector(".cart-btn span");
+
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    function saveCart() {
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    function updateCartCount() {
+      cartBtnCount.textContent = cart.length;
+    }
+
+    function renderCart() {
+      cartContainer.innerHTML = "";
+      updateCartCount();
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = '<div class="empty">Your cart is empty. <a href="menu.html" style="color:#ff7b00;text-decoration:underline;">Go to Menu</a></div>';
+        cartSummary.innerHTML = "";
+        checkoutSection.style.display = "none";
+        return;
+      }
+
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        const itemEl = document.createElement("div");
+        itemEl.classList.add("cart-item");
+
+        itemEl.innerHTML = `
+          <img src="${item.img}" alt="${item.name}">
+          <div class="item-info">
+            <h3>${item.name}</h3>
+            <p>₹${item.price}</p>
+          </div>
+          <div class="item-actions">
+            <button class="dec">−</button>
+            <span>${item.qty}</span>
+            <button class="inc">+</button>
+            <button class="remove">🗑️</button>
+          </div>
+        `;
+
+        total += item.price * item.qty;
+
+        itemEl.querySelector(".inc").addEventListener("click", () => {
+          cart[index].qty++;
+          saveCart();
+        });
+
+        itemEl.querySelector(".dec").addEventListener("click", () => {
+          cart[index].qty--;
+          if (cart[index].qty <= 0) cart.splice(index, 1);
+          saveCart();
+        });
+
+        itemEl.querySelector(".remove").addEventListener("click", () => {
+          cart.splice(index, 1);
+          saveCart();
+        });
+
+        cartContainer.appendChild(itemEl);
+      });
+
+      cartSummary.innerHTML = `Total: <span>₹${total}</span>`;
+      checkoutSection.style.display = "block";
+    }
+
+    checkoutForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const address = document.getElementById("address").value;
+
+      alert(`Thank you, ${name}! Your order will be delivered to ${address}.`);
+      localStorage.setItem("cart", "[]");
+      cart = [];
+      renderCart();
+    });
+
+    renderCart();
+  </script>
+</body>
+</html>

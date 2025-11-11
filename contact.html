@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebSpace Eats | Contact</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <div class="logo">WebSpace Eats</div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <button class="cart-btn">🛒 Cart (<span>0</span>)</button>
+  </nav>
+
+  <div class="container" style="padding-top:120px;max-width:700px;">
+    <h1 style="color:#ffcc00;margin-bottom:20px;">Get in Touch 📞</h1>
+    <form onsubmit="alert('Thank you! We will contact you soon.'); return false;">
+      <label>Name</label>
+      <input type="text" required style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:10px;">
+      <label>Email</label>
+      <input type="email" required style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:10px;">
+      <label>Message</label>
+      <textarea required style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:10px;height:100px;"></textarea>
+      <button class="btn">Send Message</button>
+    </form>
+  </div>
+
+  <footer>© 2025 WebSpace Eats | Let's Stay Connected</footer>
+  <script src="script.js"></script>
+</body>
+</html>
